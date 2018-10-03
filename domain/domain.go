@@ -65,7 +65,7 @@ func CriarTabela() {
 		"CNPJLojaUltimaCompra VARCHAR(255) NULL," +
 		"FlCPFConsumidorValido bool NULL," +
 		"FlCNPJLojaFrequenteValido bool NULL," +
-		"FlCNPJLojaUltimaCompraValido bool NULL") //Erro para testar
+		"FlCNPJLojaUltimaCompraValido bool NULL)")
 
 	ok, err := ExecutarQuery(ct)
 
