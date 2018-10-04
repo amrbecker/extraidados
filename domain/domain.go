@@ -66,15 +66,14 @@ func CriarTabela() {
 	defer db.Close()
 
 	query := `CREATE TABLE IF NOT EXISTS HistoricoConsumo (
-		ID SERIAL PRIMARY KEY,
-		CPFConsumidor VARCHAR(80) NULL,
-		Privado VARCHAR(80) NULL,
-		Incompleto VARCHAR(80) NULL,
-		DtUltimaCompra VARCHAR(80) NULL,
-		TicketMedio VARCHAR(80) NULL,
-		TicketUltimaCompra VARCHAR(80) NULL,
-		CNPJLojaFrequente VARCHAR(80) NULL,
-		CNPJLojaUltimaCompra VARCHAR(80) NULL,
+		CPFConsumidor VARCHAR(80),
+		Privado VARCHAR(80),
+		Incompleto VARCHAR(80),
+		DtUltimaCompra VARCHAR(80),
+		TicketMedio VARCHAR(80),
+		TicketUltimaCompra VARCHAR(80),
+		CNPJLojaFrequente VARCHAR(80),
+		CNPJLojaUltimaCompra VARCHAR(80),
 		FlCPFConsumidorValido bool,
 		FlCNPJLojaFrequenteValido bool,
 		FlCNPJLojaUltimaCompraValido bool)`
@@ -103,14 +102,14 @@ func InserirDados(h []*HistoricoConsumo) {
 
 	for i := 1; i < len(h); i++ {
 		stmt.Exec(
-			"h[i].CPFConsumidor",
-			"h[i].Privado",
-			"h[i].Incompleto",
-			"h[i].DtUltimaCompra",
-			"h[i].TicketMedio",
-			"h[i].TicketUltimaCompra",
-			"h[i].CNPJLojaFrequente",
-			"h[i].CNPJLojaUltimaCompra",
+			h[i].CPFConsumidor,
+			h[i].Privado,
+			h[i].Incompleto,
+			h[i].DtUltimaCompra,
+			h[i].TicketMedio,
+			h[i].TicketUltimaCompra,
+			h[i].CNPJLojaFrequente,
+			h[i].CNPJLojaUltimaCompra,
 			h[i].FlCPFConsumidorValido,
 			h[i].FlCNPJLojaFrequenteValido,
 			h[i].FlCNPJLojaUltimaCompraValido)
