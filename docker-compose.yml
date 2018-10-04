@@ -17,4 +17,4 @@ services:
      - 8080:8080
     depends_on: 
      - db
-    command: ["./wait-for-postgres.sh", "db", "go", "main.go"]
+    command: bash -c 'while !</dev/tcp/db/5432; do sleep 60; done; go run main.go'

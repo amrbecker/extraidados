@@ -66,7 +66,7 @@ func CriarTabela() {
 	defer db.Close()
 
 	query := `CREATE TABLE IF NOT EXISTS HistoricoConsumo (
-		ID integer auto_increment,
+		ID SERIAL PRIMARY KEY,
 		CPFConsumidor VARCHAR(80) NULL,
 		Privado VARCHAR(80) NULL,
 		Incompleto VARCHAR(80) NULL,
@@ -75,10 +75,9 @@ func CriarTabela() {
 		TicketUltimaCompra VARCHAR(80) NULL,
 		CNPJLojaFrequente VARCHAR(80) NULL,
 		CNPJLojaUltimaCompra VARCHAR(80) NULL,
-		FlCPFConsumidorValido bool NULL,
-		FlCNPJLojaFrequenteValido bool NULL,
-		FlCNPJLojaUltimaCompraValido bool NULL,
-		PRIMARY KEY(ID))`
+		FlCPFConsumidorValido bool,
+		FlCNPJLojaFrequenteValido bool,
+		FlCNPJLojaUltimaCompraValido bool)`
 
 	db.Exec(query)
 
