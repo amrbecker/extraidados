@@ -3,9 +3,18 @@ package domain
 import (
 	"database/sql"
 	"fmt"
+	"log"
 
 	//Postgres driver
 	_ "github.com/lib/pq"
+)
+
+const (
+	host     = "localhost"
+	port     = 5432
+	user     = "postgres"
+	password = "123456"
+	dbname   = "DadosExtraidos"
 )
 
 // HistoricoConsumo estrutura de dados
@@ -22,14 +31,6 @@ type HistoricoConsumo struct {
 	FlCNPJLojaFrequenteValido,
 	FlCNPJLojaUltimaCompraValido bool
 }
-
-const (
-	host     = "localhost"
-	port     = 5432
-	user     = "postgres"
-	password = "123456"
-	dbname   = "DadosExtraidos"
-)
 
 //TestarConexao com o conexão com o banco de dados
 func TestarConexao() {
@@ -54,41 +55,72 @@ func TestarConexao() {
 //CriarTabela insere a tabela no banco de dados se ainda não existir
 func CriarTabela() {
 
-	ct := fmt.Sprintf("CREATE TABLE IF NOT EXISTS HistoricoConsumo (" +
-		"CPFConsumidor VARCHAR(255) NULL," +
-		"Privado VARCHAR(255) NULL," +
-		"Incompleto VARCHAR(255) NULL," +
-		"DtUltimaCompra VARCHAR(255) NULL," +
-		"TicketMedio VARCHAR(255) NULL," +
-		"TicketUltimaCompra VARCHAR(255) NULL," +
-		"CNPJLojaFrequente VARCHAR(255) NULL," +
-		"CNPJLojaUltimaCompra VARCHAR(255) NULL," +
-		"FlCPFConsumidorValido bool NULL," +
-		"FlCNPJLojaFrequenteValido bool NULL," +
-		"FlCNPJLojaUltimaCompraValido bool NULL)")
-
-	ok, err := ExecutarQuery(ct)
-
-	if ok == true {
-		fmt.Println("Tabela HistoricoConsumo criada!")
-	}
-	if err != nil {
-		fmt.Println(err)
-	}
-}
-
-//ExecutarQuery executa as requisições ao banco de dados
-func ExecutarQuery(query string) (bool, error) {
 	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+
 		"password=%s dbname=%s sslmode=disable",
 		host, port, user, password, dbname)
 	db, err := sql.Open("postgres", psqlInfo)
 
 	if err != nil {
-		return false, err
+		panic(err)
 	}
 	defer db.Close()
 
+	query := `CREATE TABLE IF NOT EXISTS HistoricoConsumo (
+		ID integer auto_increment,
+		CPFConsumidor VARCHAR(80) NULL,
+		Privado VARCHAR(80) NULL,
+		Incompleto VARCHAR(80) NULL,
+		DtUltimaCompra VARCHAR(80) NULL,
+		TicketMedio VARCHAR(80) NULL,
+		TicketUltimaCompra VARCHAR(80) NULL,
+		CNPJLojaFrequente VARCHAR(80) NULL,
+		CNPJLojaUltimaCompra VARCHAR(80) NULL,
+		FlCPFConsumidorValido bool NULL,
+		FlCNPJLojaFrequenteValido bool NULL,
+		FlCNPJLojaUltimaCompraValido bool NULL,
+		PRIMARY KEY(ID))`
+
 	db.Exec(query)
-	return true, nil
+
+	if err == nil {
+		fmt.Println("Tabela HistoricoConsumo criada!")
+	}
+}
+
+//InserirDados recebe uma lista de históricos para inserir no banco de dados
+func InserirDados(h []*HistoricoConsumo) {
+	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+
+		"password=%s dbname=%s sslmode=disable",
+		host, port, user, password, dbname)
+	db, err := sql.Open("postgres", psqlInfo)
+
+	if err != nil {
+		panic(err)
+	}
+	defer db.Close()
+
+	tx, _ := db.Begin()
+	stmt, _ := tx.Prepare("INSERT INTO HistoricoConsumo VALUES(?,?,?,?,?,?,?,?,?,?,?)")
+
+	for i := 1; i < len(h); i++ {
+		stmt.Exec(
+			"h[i].CPFConsumidor",
+			"h[i].Privado",
+			"h[i].Incompleto",
+			"h[i].DtUltimaCompra",
+			"h[i].TicketMedio",
+			"h[i].TicketUltimaCompra",
+			"h[i].CNPJLojaFrequente",
+			"h[i].CNPJLojaUltimaCompra",
+			h[i].FlCPFConsumidorValido,
+			h[i].FlCNPJLojaFrequenteValido,
+			h[i].FlCNPJLojaUltimaCompraValido)
+	}
+
+	if err != nil {
+		tx.Rollback()
+		log.Fatal(err)
+	}
+
+	tx.Commit()
 }

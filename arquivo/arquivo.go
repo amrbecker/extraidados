@@ -2,7 +2,6 @@ package arquivo
 
 import (
 	"bufio"
-	"fmt"
 	"os"
 	"strings"
 
@@ -45,22 +44,6 @@ func ExtrairDados() {
 
 		h = append(h, ht)
 
-	}
-
-	for i := 1; i < len(h); i++ {
-		q := fmt.Sprintf("INSERT INTO HistoricoConsumo VALUES('%s','%s','%s','%s','%s','%s','%s','%s',%t,%t,%t)",
-			h[i].CPFConsumidor, h[i].Privado, h[i].Incompleto, h[i].DtUltimaCompra,
-			h[i].TicketMedio, h[i].TicketUltimaCompra, h[i].CNPJLojaFrequente,
-			h[i].CNPJLojaUltimaCompra, h[i].FlCPFConsumidorValido,
-			h[i].FlCNPJLojaFrequenteValido, h[i].FlCNPJLojaUltimaCompraValido)
-
-		ok, err := domain.ExecutarQuery(q)
-
-		if ok == true {
-			fmt.Println("Dados inseridos na tabela para o CPF: " + h[i].CPFConsumidor)
-		}
-		if err != nil {
-			fmt.Println(err)
-		}
+		domain.InserirDados(h)
 	}
 }
